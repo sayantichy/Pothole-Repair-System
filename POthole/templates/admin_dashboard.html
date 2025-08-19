@@ -1,0 +1,45 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">📋 Admin Dashboard</h2>
+<div class="card p-3">
+    <h5>All Reported Potholes</h5>
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Reporter</th>
+                <th>Location</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pothole in potholes %}
+            <tr>
+                <td>{{ pothole[0] }}</td>
+                <td>{{ pothole[1] }}</td>
+                <td>{{ pothole[2] }}</td>
+                <td>{{ pothole[3] }}</td>
+                <td>
+                    {% if pothole[4] == "Pending" %}
+                        <span class="badge bg-warning">{{ pothole[4] }}</span>
+                    {% else %}
+                        <span class="badge bg-success">{{ pothole[4] }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if pothole[4] == "Pending" %}
+                        <a href="{{ url_for('mark_repaired', pothole_id=pothole[0]) }}" 
+                           class="btn btn-sm btn-primary">Mark Repaired</a>
+                    {% else %}
+                        ✅
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

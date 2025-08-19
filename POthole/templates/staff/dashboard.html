@@ -1,0 +1,72 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<!-- Header: title + actions -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Staff Dashboard</h1>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('public.home') }}">Home</a>
+    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">Logout</a>
+  </div>
+</div>
+
+<!-- Intro / hint -->
+<div class="hero mb-4">
+  <div>
+    <p class="mb-0 text-muted">
+      View assigned potholes, open the public tracking page, and coordinate with your crew.
+    </p>
+  </div>
+</div>
+
+{# Support different variable names just in case (potholes / rows / items) #}
+{% set data = potholes if potholes is defined else (rows if rows is defined else (items if items is defined else [])) %}
+
+<div class="card">
+  <div class="card-header">Assigned / Nearby Potholes</div>
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Public ID</th>
+          <th>Address</th>
+          <th class="text-center">Size</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+          {% set p = item if item.id is defined else item.p %}
+          <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.public_id }}</td>
+            <td>{{ p.street_address }}</td>
+            <td class="text-center">{{ p.size_1_10 }}</td>
+            <td>
+              <span class="badge text-bg-{{ 'danger' if p.priority=='High' else 'warning' if p.priority=='Medium' else 'secondary' }}">
+                {{ p.priority }}
+              </span>
+            </td>
+            <td>
+              {% set c = 'secondary' %}
+              {% if p.status == 'repaired' %}{% set c = 'success' %}
+              {% elif p.status == 'in_progress' %}{% set c = 'warning' %}
+              {% elif p.status in ['temporary','not_repaired'] %}{% set c = 'danger' %}{% endif %}
+              <span class="badge text-bg-{{ c }}">{{ p.status }}</span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-primary" href="{{ url_for('public.track', public_id=p.public_id) }}" target="_blank">Open</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7" class="text-muted p-3">No items to display.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

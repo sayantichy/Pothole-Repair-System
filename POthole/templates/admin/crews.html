@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Crews</h1>
+  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">Logout</a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Create Crew</div>
+  <div class="card-body">
+    <form method="post" action="{{ url_for('admin.create_crew') }}" class="row g-2">
+      <div class="col-md-3"><input class="form-control" name="name" placeholder="Crew name" required></div>
+      <div class="col-md-3"><input class="form-control" name="crew_number" placeholder="Crew number" required></div>
+      <div class="col-md-2"><input class="form-control" type="number" name="people_count" placeholder="People count"></div>
+      <div class="col-md-2"><button class="btn btn-success w-100">Create</button></div>
+    </form>
+  </div>
+</div>
+
+<table class="table table-sm align-middle">
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Number</th><th>Lead</th><th>Members</th><th>Assign Lead</th><th>Add Member</th><th>Remove Member</th></tr>
+  </thead>
+  <tbody>
+  {% for c in crews %}
+    <tr>
+      <td>{{ c.id }}</td>
+      <td>{{ c.name }}</td>
+      <td>{{ c.crew_number }}</td>
+      <td>{{ c.lead.name if c.lead else "-" }}</td>
+      <td>
+        {% for m in c.members %}
+          <span class="badge text-bg-secondary">{{ m.user.name }}</span>
+        {% endfor %}
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('admin.set_crew_lead') }}" class="d-flex gap-2">
+          <input type="hidden" name="crew_id" value="{{ c.id }}">
+          <select name="user_id" class="form-select form-select-sm">
+            {% for u in users %}
+              <option value="{{ u.id }}">{{ u.name }} ({{ u.email }})</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-warning">Set Lead</button>
+        </form>
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('admin.add_crew_member') }}" class="d-flex gap-2">
+          <input type="hidden" name="crew_id" value="{{ c.id }}">
+          <select name="user_id" class="form-select form-select-sm">
+            {% for u in users %}
+              <option value="{{ u.id }}">{{ u.name }} ({{ u.email }})</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-primary">Add</button>
+        </form>
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('admin.remove_crew_member') }}" class="d-flex gap-2">
+          <input type="hidden" name="crew_id" value="{{ c.id }}">
+          <select name="user_id" class="form-select form-select-sm">
+            {% for m in c.members %}
+              <option value="{{ m.user.id }}">{{ m.user.name }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-outline-danger">Remove</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

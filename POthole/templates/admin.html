@@ -1,0 +1,41 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th><th>Street</th><th>District</th><th>Severity</th>
+            <th>Location</th><th>Status</th><th>Update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in potholes %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.street }}</td>
+            <td>{{ p.district }}</td>
+            <td>{{ p.severity }}</td>
+            <td>{{ p.location }}</td>
+            <td>{{ p.status }}</td>
+            <td>
+                <form method="POST">
+                    <input type="hidden" name="pothole_id" value="{{ p.id }}">
+                    <input type="text" name="crew_id" placeholder="Crew ID" class="form-control mb-1">
+                    <input type="number" step="0.5" name="hours" placeholder="Hours" class="form-control mb-1">
+                    <input type="text" name="materials" placeholder="Materials" class="form-control mb-1">
+                    <input type="number" step="0.01" name="cost" placeholder="Cost" class="form-control mb-1">
+                    <select name="status" class="form-control mb-1">
+                        <option>Work in Progress</option>
+                        <option>Repaired</option>
+                        <option>Temporary Repair</option>
+                        <option>Not Repaired</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+

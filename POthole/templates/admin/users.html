@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1 class="h4 mb-3">Users & Roles</h1>
+<table class="table table-sm align-middle">
+  <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Change</th></tr></thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <td>{{ u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin.set_role') }}" class="d-flex gap-2">
+          <input type="hidden" name="user_id" value="{{ u.id }}">
+          <select class="form-select form-select-sm" name="role">
+            {% for r in ["citizen","staff","lead","admin"] %}
+              <option value="{{ r }}" {{ "selected" if u.role==r else "" }}>{{ r }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-primary">Save</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+

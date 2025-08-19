@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Potholes</h1>
+  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">Logout</a>
+</div>
+
+{% if total_count == 0 %}
+  <div class="alert alert-info">No pothole records exist in the database.</div>
+{% elif rows|length == 0 %}
+  <div class="alert alert-warning">No potholes match the current filter.</div>
+{% endif %}
+
+<form class="mb-3" method="get">
+  <div class="row g-2 align-items-end">
+    <div class="col-auto">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        <option value="" {{ "selected" if not selected_status }}>All</option>
+        {% for s in ["reported","in_progress","repaired","temporary","not_repaired"] %}
+          <option value="{{ s }}" {{ "selected" if selected_status==s }}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-outline-secondary">Filter</button></div>
+  </div>
+</form>
+
+<table class="table table-sm align-middle">
+  <thead>
+    <tr>
+      <th>ID</th><th>Tracking</th><th>Address</th><th>Size</th>
+      <th>Priority</th><th>Status</th><th>Latest WO</th><th>Assign crew</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+      {% set p = r.p %}
+      {% set wo = r.wo %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td><a href="{{ url_for('public.track', public_id=p.public_id) }}" target="_blank">{{ p.public_id }}</a></td>
+        <td>{{ p.street_address }}</td>
+        <td>{{ p.size_1_10 }}</td>
+        <td>
+          <span class="badge text-bg-{{ 'danger' if p.priority=='High' else 'warning' if p.priority=='Medium' else 'secondary' }}">
+            {{ p.priority }}
+          </span>
+        </td>
+        <td>{{ p.status }}</td>
+        <td>
+          {% if wo %}
+            #{{ wo.id }} – {{ wo.status }}{% if wo.crew %} ({{ wo.crew.name }}){% endif %}
+          {% else %}
+            <span class="text-muted">None</span>
+          {% endif %}
+        </td>
+        <td style="min-width: 280px;">
+          <form method="post" action="{{ url_for('admin.assign_crew') }}" class="d-flex gap-2">
+            <input type="hidden" name="pothole_id" value="{{ p.id }}">
+            <select name="crew_id" class="form-select form-select-sm" required>
+              {% for c in crews %}
+                <option value="{{ c.id }}">{{ c.name }} ({{ c.crew_number }})</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-sm btn-primary">Assign</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1 class="h4 mb-3">My Dashboard</h1>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card"><div class="card-body">
+      <h6 class="text-muted">Wallet balance</h6>
+      <div class="display-6">{{ '%.2f'|format(current_user.wallet_balance) }} Tk</div>
+    </div></div>
+  </div>
+</div>
+
+<h2 class="h5 mt-4">My Reports</h2>
+<table class="table table-sm">
+  <thead><tr><th>Date</th><th>Tracking ID</th><th>Address</th><th>Status</th><th>Duplicate?</th></tr></thead>
+  <tbody>
+  {% for i in reports %}
+    <tr>
+      <td>{{ i.report.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+      <td><a href="{{ url_for('public.track', public_id=i.pothole.public_id) }}">{{ i.pothole.public_id }}</a></td>
+      <td>{{ i.pothole.street_address }}</td>
+      <td>{{ i.pothole.status }}</td>
+      <td>{{ "Yes" if i.report.is_duplicate else "No" }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="h5 mt-4">Wallet Transactions</h2>
+<table class="table table-sm">
+  <thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th></tr></thead>
+  <tbody>
+  {% for t in txs %}
+    <tr>
+      <td>{{ t.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+      <td>{{ t.description }}</td>
+      <td>{{ t.type }}</td>
+      <td>{{ '%.2f'|format(t.amount if t.type=='credit' else -t.amount) }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+

@@ -1,0 +1,91 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1 class="h5 mb-3">Pothole #{{ pothole.id }} ({{ pothole.public_id }})</h1>
+<div class="row g-4">
+  <div class="col-md-7">
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Address:</strong> {{ pothole.street_address }}</li>
+      <li class="list-group-item"><strong>Size:</strong> {{ pothole.size_1_10 }}</li>
+      <li class="list-group-item"><strong>Priority:</strong> {{ pothole.priority }}</li>
+      <li class="list-group-item"><strong>Status:</strong> {{ pothole.status }}</li>
+    </ul>
+    <h2 class="h6 mt-4">Work Orders</h2>
+    <table class="table table-sm">
+      <thead><tr><th>ID</th><th>Crew</th><th>Status</th><th>Hours</th><th>Total</th></tr></thead>
+      <tbody>
+      {% for wo in work_orders %}
+        <tr>
+          <td>{{ wo.id }}</td>
+          <td>{{ wo.crew.name if wo.crew else '' }}</td>
+          <td>{{ wo.status }}</td>
+          <td>{{ wo.hours_applied or 0 }}</td>
+          <td>{{ '%.2f'|format(wo.total_cost or 0) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">Create Work Order</div>
+      <div class="card-body">
+        <form method="post">
+          <input type="hidden" name="action" value="create_wo">
+          <label class="form-label">Crew</label>
+          <select class="form-select mb-2" name="crew_id" required>
+            {% for c in crews %}
+            <option value="{{ c.id }}">{{ c.name }} ({{ c.crew_number }})</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-success w-100">Create</button>
+        </form>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <div class="card-header">Update Work Order</div>
+      <div class="card-body">
+        <form method="post">
+          <input type="hidden" name="action" value="update_wo">
+          <div class="mb-2">
+            <label class="form-label">Work Order ID</label>
+            <input name="wo_id" class="form-control" required>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-2">
+              <label class="form-label">Hours</label>
+              <input name="hours_applied" type="number" step="0.1" class="form-control">
+            </div>
+            <div class="col-6 mb-2">
+              <label class="form-label">People used</label>
+              <input name="people_used" type="number" class="form-control">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-2">
+              <label class="form-label">Filler (kg)</label>
+              <input name="filler_material_kg" type="number" step="0.1" class="form-control">
+            </div>
+            <div class="col-6 mb-2">
+              <label class="form-label">Material cost</label>
+              <input name="material_cost" type="number" step="0.01" class="form-control">
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Equipment cost</label>
+            <input name="equipment_cost" type="number" step="0.01" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">WO Status</label>
+            <select name="wo_status" class="form-select">
+              <option value="in_progress">in_progress</option>
+              <option value="completed">completed</option>
+            </select>
+          </div>
+          <button class="btn btn-primary w-100">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

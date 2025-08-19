@@ -1,0 +1,65 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">📝 Reporter Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-3 mb-4">
+            <h5>Report a New Pothole</h5>
+            <form method="POST" action="{{ url_for('report') }}">
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Severity</label>
+                    <select name="severity" class="form-select">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Report</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>💰 Wallet Balance</h5>
+            <p class="fs-3 fw-bold text-success">{{ wallet }} Tk</p>
+        </div>
+    </div>
+</div>
+
+<div class="card p-3">
+    <h5>Your Reports</h5>
+    <table class="table table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Location</th>
+                <th>Severity</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pothole in potholes %}
+            <tr>
+                <td>{{ pothole[0] }}</td>
+                <td>{{ pothole[2] }}</td>
+                <td>{{ pothole[3] }}</td>
+                <td>
+                    {% if pothole[4] == "Pending" %}
+                        <span class="badge bg-warning">{{ pothole[4] }}</span>
+                    {% else %}
+                        <span class="badge bg-success">{{ pothole[4] }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

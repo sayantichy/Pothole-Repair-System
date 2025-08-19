@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1 class="h5">Tracking ID: {{ pothole.public_id }}</h1>
+<ul class="list-group mb-3">
+  <li class="list-group-item"><strong>Address:</strong> {{ pothole.street_address }}</li>
+  <li class="list-group-item"><strong>Size:</strong> {{ pothole.size_1_10 }}</li>
+  <li class="list-group-item"><strong>Priority:</strong> {{ pothole.priority }}</li>
+  <li class="list-group-item"><strong>Status:</strong> {{ pothole.status }}</li>
+</ul>
+{% if work_orders %}
+<h2 class="h6">Work orders</h2>
+<table class="table table-sm">
+  <thead><tr><th>Status</th><th>Hours</th><th>Total cost</th><th>Updated</th></tr></thead>
+  <tbody>
+    {% for wo in work_orders %}
+    <tr>
+      <td>{{ wo.status }}</td>
+      <td>{{ '%.1f'|format(wo.hours_applied or 0) }}</td>
+      <td>{{ '%.2f'|format(wo.total_cost or 0) }}</td>
+      <td>{{ wo.updated_at.strftime("%Y-%m-%d %H:%M") if wo.updated_at else '' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<h1 class="h4 mb-3">Report a pothole</h1>
+<form method="post" class="row g-3" enctype="multipart/form-data">
+  <div class="col-md-8">
+    <label class="form-label">Street address</label>
+    <input name="street_address" class="form-control" required>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Size (1–10)</label>
+    <input name="size_1_10" type="number" min="1" max="10" class="form-control" required>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Location</label>
+    <select name="location_type" class="form-select">
+      <option value="middle">Middle</option>
+      <option value="curb">Curb</option>
+      <option value="edge">Edge</option>
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Latitude (optional)</label>
+    <input name="latitude" type="number" step="0.000001" class="form-control">
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Longitude (optional)</label>
+    <input name="longitude" type="number" step="0.000001" class="form-control">
+  </div>
+  <div class="col-12">
+    <label class="form-label">Photos (JPG/PNG, multiple)</label>
+    <input name="photos" type="file" class="form-control" accept=".jpg,.jpeg,.png" multiple>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary">Submit</button>
+  </div>
+</form>
+{% endblock %}
+
